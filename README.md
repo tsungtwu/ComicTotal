@@ -20,12 +20,11 @@
 *** for contributors-url, forks-url, etc. This is an optional, concise syntax you may use.
 *** https://www.markdownguide.org/basic-syntax/#reference-style-links
 -->
-[![Contributors][contributors-shield]][contributors-url]
-[![Forks][forks-shield]][forks-url]
-[![Stargazers][stars-shield]][stars-url]
-[![Issues][issues-shield]][issues-url]
-[![MIT License][license-shield]][license-url]
-[![LinkedIn][linkedin-shield]][linkedin-url]
+
+<!-- [![Stargazers][stars-shield]][stars-url] -->
+<!-- [![Issues][issues-shield]][issues-url] -->
+<!-- [![MIT License][license-shield]][license-url] -->
+
 
 
 
@@ -105,11 +104,10 @@ To get a local copy up and running follow these simple steps.
 
 ### Prerequisites
 
-This is an example of how to list things you need to use the software and how to install them.
 * pip
-  ```sh
-  npm install npm@latest -g
-  ```
+* docker
+* docker-compose
+
 
 ### Installation
 
@@ -194,14 +192,14 @@ Project Link: [https://github.com/tsungtwu/ComicTotal](https://github.com/tsungt
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
 [contributors-shield]: https://img.shields.io/github/contributors/tsungtwu/repo.svg?style=for-the-badge
-[contributors-url]: https://github.com/tsungtwu/repo/graphs/contributors
+[contributors-url]: https://github.com/tsungtwu/ComicTotal/graphs/contributors
 [forks-shield]: https://img.shields.io/github/forks/tsungtwu/repo.svg?style=for-the-badge
-[forks-url]: https://github.com/tsungtwu/repo/network/members
+[forks-url]: https://github.com/tsungtwu/ComicTotal/network/members
 [stars-shield]: https://img.shields.io/github/stars/tsungtwu/repo.svg?style=for-the-badge
-[stars-url]: https://github.com/tsungtwu/repo/stargazers
+[stars-url]: https://github.com/tsungtwu/ComicTotal/stargazers
 [issues-shield]: https://img.shields.io/github/issues/tsungtwu/repo.svg?style=for-the-badge
-[issues-url]: https://github.com/tsungtwu/repo/issues
+[issues-url]: https://github.com/tsungtwu/ComicTotal/issues
 [license-shield]: https://img.shields.io/github/license/tsungtwu/repo.svg?style=for-the-badge
-[license-url]: https://github.com/tsungtwu/repo/blob/master/LICENSE.txt
+[license-url]: https://github.com/tsungtwu/ComicTotal/blob/master/LICENSE.txt
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/tsungtwu
