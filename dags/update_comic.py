@@ -23,7 +23,9 @@ default_args = {
     'start_date': datetime(2021, 7, 21, 0, 0),
     'schedule_interval': '*/30 * * * *',
     'retries': 2,
-    'retry_delay': timedelta(minutes=1)
+    'retry_delay': timedelta(minutes=1),
+    'max_active_runs': 1,
+    'catchup': False
 }
 
 LINE_NOTIFY_API = 'https://notify-api.line.me/api/notify'
