@@ -3,6 +3,7 @@ import time
 import json
 import logging
 import requests
+import random
 from datetime import datetime, timedelta
 
 from airflow import DAG
@@ -21,11 +22,10 @@ from comiccrawler.episode import Episode
 default_args = {
     'owner': 'Tsung Wu',
     'start_date': datetime(2021, 7, 21, 0, 0),
-    'schedule_interval': '*/30 * * * *',
+    'schedule_interval': f'{random.randint(0, 59)} * * * *',
     'retries': 2,
     'retry_delay': timedelta(minutes=1),
-    'max_active_runs': 1,
-    'catchup': False
+    'max_active_runs': 1
 }
 
 LINE_NOTIFY_API = 'https://notify-api.line.me/api/notify'
@@ -58,7 +58,9 @@ def check_comic_info(**context):
 
     all_comic_info = dict(metadata)
     anything_new = dict()
-    for comic_id in all_comic_info:
+    comic_keys = list(all_comic_info.keys())
+
+    for comic_id in sorted(comic_keys, key=lambda _: random.random()):
         comic_info = all_comic_info[comic_id]
         for comic in comic_info['source']:
             try:
@@ -91,6 +93,7 @@ def check_comic_info(**context):
                     break
             except Exception as e:
                 print(e)
+        time.sleep(random.randint(5, 30))
 
     if len(anything_new) == 0:
         print("Nothing new now, prepare to end the workflow.")
@@ -134,7 +137,7 @@ def send_line_notify(**context):
         raise AirflowFailException('LINE Token not found')
 
 
-with DAG('comic_update_pipeline', default_args=default_args, tags=['comictotal'], schedule_interval='*/30 * * * *') as dag:
+with DAG('comic_update_pipeline', default_args=default_args, tags=['comictotal'], schedule_interval=None, catchup=False) as dag:
 
     # define tasks
     latest_only = LatestOnlyOperator(task_id='latest_only')
