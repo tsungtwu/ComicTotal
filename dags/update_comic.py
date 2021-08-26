@@ -59,12 +59,18 @@ def check_comic_info(**context):
     all_comic_info = dict(metadata)
     anything_new = dict()
     comic_keys = list(all_comic_info.keys())
-
+    last_module = None
     for comic_id in sorted(comic_keys, key=lambda _: random.random()):
         comic_info = all_comic_info[comic_id]
         for comic in comic_info['source']:
             try:
                 mission = Mission(url=comic['url'])
+
+                if last_module == mission.module.name:
+                    time.sleep(random.randint(5, 20))
+                else:
+                    last_module = mission.module.name
+
                 Analyzer(mission).analyze()
 
                 old_eps = EpisodeList([Episode(**e) for e in comic['episodes']])
@@ -93,7 +99,6 @@ def check_comic_info(**context):
                     break
             except Exception as e:
                 print(e)
-        time.sleep(random.randint(5, 30))
 
     if len(anything_new) == 0:
         print("Nothing new now, prepare to end the workflow.")
