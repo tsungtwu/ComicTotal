@@ -101,9 +101,9 @@ def init_comic_info(**context):
                     "url": ep.url
                 }
                 if comic_id not in anything_new:
-                    anything_new[comic_id] = [ep_info]
+                    anything_new[comic_id] = {"url": comic['url'], "episodes": [ep_info]}
                 else:
-                    anything_new[comic_id].append(ep_info)
+                    anything_new[comic_id]['episodes'].append(ep_info)
 
         mission.episodes = [vars(e) for e in old_eps]
         mission.module = None
@@ -132,23 +132,90 @@ def send_line_notify(**context):
     anything_new, all_comic_info = context['task_instance'].xcom_pull(task_ids='init_comic_info')
     print(f'new comic: {anything_new}')
 
-    LINE_TOKEN = Variable.get('line_token_prod', None)
-    if LINE_TOKEN is not None:
-        file_dir = os.path.dirname(__file__)
-        file = {'imageFile': open(os.path.join(file_dir, '../data/new_comic_cat_meme.jpg'), 'rb')}
+    CHANNEL_ACCESS_TOKEN = Variable.get('LINE_CHANNEL_ACCESS_TOKEN', None)
+
+    if CHANNEL_ACCESS_TOKEN is not None:
+        LINE_MESSAGING_API = "https://api.line.me/v2/bot/message/push"
+        GROUP_ID = Variable.get('LINE_GROUP_ID', None)  # 群組的 ID
+
+        if GROUP_ID is None:
+            raise AirflowFailException('LINE Group ID not found')
+
+        headers = {
+            'Content-Type': 'application/json',
+            'Authorization': f'Bearer {CHANNEL_ACCESS_TOKEN}'
+        }
+
+        # 使用GitHub上的圖片URL
+        cat_meme_url = "https://raw.githubusercontent.com/tsungtwu/ComicTotal/refs/heads/master/data/new_comic_cat_meme.jpg"
+
         for comic_id in dict(anything_new):
             print(f'send notification: {comic_id}')
-            payload = {
-                'message':
-                    f"\n奇怪的漫畫增加了: {comic_id}"
+
+            # 創建Flex Message
+            flex_message = {
+                "type": "flex",
+                "altText": f"奇怪的漫畫增加了: {comic_id}",
+                "contents": {
+                    "type": "bubble",
+                    "hero": {
+                        "type": "image",
+                        "url": cat_meme_url,
+                        "size": "full",
+                        "aspectRatio": "20:13",
+                        "aspectMode": "cover"
+                    },
+                    "body": {
+                        "type": "box",
+                        "layout": "vertical",
+                        "contents": [
+                            {
+                                "type": "text",
+                                "text": "奇怪的漫畫增加了",
+                                "weight": "bold",
+                                "size": "xl",
+                                "color": "#ff5551"
+                            },
+                            {
+                                "type": "text",
+                                "text": comic_id,
+                                "weight": "bold",
+                                "size": "lg",
+                                "margin": "md"
+                            }
+                        ]
+                    },
+                    "footer": {
+                        "type": "box",
+                        "layout": "vertical",
+                        "spacing": "sm",
+                        "contents": [
+                            {
+                                "type": "button",
+                                "style": "primary",
+                                "action": {
+                                    "type": "uri",
+                                    "label": "去看看",
+                                    "uri": dict(anything_new)[comic_id]['url']
+                                }
+                            }
+                        ]
+                    }
+                }
             }
 
-            r = requests.post(LINE_NOTIFY_API, data=payload, headers={'Authorization': "Bearer " + LINE_TOKEN}, files=file)
+            payload = {
+                "to": GROUP_ID,
+                "messages": [flex_message]
+            }
+
+            r = requests.post(LINE_MESSAGING_API, json=payload, headers=headers)
 
             if r.status_code != 200:
-                raise AirflowFailException('Send notification fail: {}, msg: {}'.format(r.status_code, r.text))
+                raise AirflowFailException(f'Send line message fail: {r.status_code}, msg: {r.text}')
     else:
-        raise AirflowFailException('LINE Token not found')
+        raise AirflowFailException('LINE Channel Access Token not found')
+
 
 
 def get_parameters(context):

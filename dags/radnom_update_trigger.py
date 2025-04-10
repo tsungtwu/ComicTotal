@@ -16,7 +16,7 @@ import pytz
 def schedule_update_pipline():
     random.seed(time.time())
     now = datetime.now().astimezone(pytz.timezone('Asia/Taipei'))
-    execution_date = now + timedelta(minutes=random.randint(10, 20))
+    execution_date = now + timedelta(minutes=random.randint(20, 30))
     trigged_dag = trigger_dag(
         dag_id='comic_update_pipeline',
         conf={},
@@ -33,7 +33,7 @@ with DAG(
     dag_id="radnom_update_trigger",
     default_args={"owner": "tsungtwu"},
     start_date=days_ago(2),
-    schedule_interval="*/30 16-17,0-15 * * *",
+    schedule_interval="*/40 16-17,23,0,3-15 * * *",
     tags=['comictotal'],
     catchup=False
 ) as dag:
